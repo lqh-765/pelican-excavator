@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#192a30">
+<title>鹈鹕挖掘机大作战</title>
+<style>
+:root{color-scheme:dark;--ink:#162a30;--cream:#fff6dc;--yellow:#ffd04a;--line:#3d5052;--muted:#b8c7c2}
+*{box-sizing:border-box}body{margin:0;background:#192a30;color:var(--cream);font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif}button{font:inherit;cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent;touch-action:none}button:focus-visible{outline:3px solid #fff1b9;outline-offset:3px}
+main{width:min(1240px,calc(100% - 44px));margin:24px auto 22px}.mast{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}.brand{display:flex;align-items:center;gap:13px}.badge{width:48px;height:48px;display:grid;place-items:center;border-radius:13px;background:var(--yellow);color:var(--ink);flex:none;box-shadow:0 3px #ad791f}.badge svg{width:31px}h1{margin:0;font-size:clamp(1.25rem,3vw,2.05rem);letter-spacing:.025em;line-height:1.18}.subtitle{font-size:.875rem;margin:5px 0 0;color:var(--muted)}.menu{display:flex;gap:7px}.menu button{white-space:nowrap;background:#263b40;border:1px solid var(--line);border-radius:9px;min-height:42px;padding:0 12px;font-size:.875rem}.menu button:hover{background:#334a50}
+.yard{position:relative;aspect-ratio:16/9;border:3px solid #111f23;border-radius:16px;overflow:hidden;background:#91d9e9;isolation:isolate;box-shadow:0 6px #101e23}.yard>svg{width:100%;height:100%;display:block}.hud{position:absolute;top:4%;left:2.4%;right:2.4%;display:flex;justify-content:space-between;pointer-events:none;gap:8px}.card{background:#fff8e8;color:#253632;border:2px solid #283e3a;box-shadow:0 3px #233b3970;border-radius:12px;padding:8px 13px;display:flex;align-items:center;gap:10px;font-weight:800}.card small{display:block;font-size:.75rem;line-height:1.25;color:#535f51}.card strong{font-size:1.35rem;font-variant-numeric:tabular-nums;line-height:1.2}.token{display:grid;place-items:center;border-radius:50%;background:#ffd34e;border:2px solid #ac791e;color:#875511;width:29px;height:29px;font-size:.95rem}.steps{display:flex;gap:4px;margin-top:5px}.steps span{width:21px;height:6px;border-radius:8px;background:#dcd9c7}.steps .done{background:#319377}.prompt{position:absolute;left:50%;bottom:4%;transform:translateX(-50%);text-align:center;padding:8px 15px;border-radius:999px;background:#233331;color:#fff7dc;font-size:clamp(.72rem,1.45vw,.98rem);font-weight:700;width:max-content;max-width:94%;pointer-events:none}.prompt[data-kind=good]{background:#176d56}.prompt[data-kind=warn]{background:#824226}
+.overlay{position:absolute;inset:0;display:grid;place-items:center;background:#162a30a8;text-align:center;padding:12px}.overlay[hidden]{display:none}.dialog{border:3px solid #172d30;border-radius:16px;background:#fff5da;color:#233533;padding:16px 27px;box-shadow:0 5px #192a30}.dialog h2{margin:0;font-size:clamp(1rem,4vw,2rem)}.dialog p{margin:5px 0 10px}.dialog button{padding:8px 18px;border:2px solid #29413a;border-radius:8px;background:var(--yellow);font-weight:800;color:#1b3433}
+.controls{display:grid;grid-template-columns:repeat(4,1fr) 1.2fr;gap:9px;margin-top:14px;touch-action:none}.group{padding:8px;background:#24383c;border:1px solid var(--line);border-radius:11px;min-width:0}.group h2{margin:0 0 6px;color:#c8d6d0;font-size:.81rem;font-weight:650}.pair{display:grid;grid-template-columns:1fr 1fr;gap:5px}.key{display:flex;justify-content:center;align-items:center;gap:5px;width:100%;min-height:42px;border:1px solid #59706c;border-radius:7px;background:#344d50;font-size:.87rem;white-space:nowrap;padding:0 3px;font-weight:700}.key kbd{font:700 .75rem system-ui;color:#dbe6dc;border:1px solid #7e9289;border-radius:4px;padding:1px 4px}.key:hover,.key.held{background:#476b64}.key.held{transform:translateY(2px)}.action{background:var(--yellow);color:#23322c;border-color:#f5bb37}.action kbd{color:#473d23;border-color:#a0772e}.action:hover,.action.held{background:#ffe388}
+@media(max-width:740px){main{width:calc(100% - 18px);margin:12px auto}.mast{margin-bottom:9px}.badge{width:37px;height:37px}.badge svg{width:25px}.brand{gap:8px}.subtitle{font-size:.73rem}.menu button{padding:0 7px;min-height:36px;font-size:.75rem}.yard{border-radius:11px;border-width:2px}.card{padding:4px 7px;border-radius:8px;gap:5px}.card small{font-size:.65rem}.card strong{font-size:1rem}.token{width:21px;height:21px;font-size:.72rem}.steps span{width:13px;height:4px}.prompt{padding:4px 9px}.controls{gap:5px;margin-top:9px}.group{padding:5px}.key{font-size:.75rem;min-height:44px}.key kbd{font-size:.65rem;padding:0 2px}}
+@media(max-width:540px){.controls{grid-template-columns:repeat(2,1fr)}.action-group{grid-column:1/-1}.key{font-size:.88rem}.subtitle{display:none}.group h2{margin-bottom:4px}.hud{top:3%}}
+@media(min-width:800px) and (min-height:560px){main{width:min(1240px,calc(100% - 44px),calc((100svh - 185px)*16/9))}}
+</style>
+</head>
+<body>
+<main>
+  <header class="mast">
+    <div class="brand"><div class="badge" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 20h22v5H5zM9 18v-6h7l3 6zM18 13l5-8 4 2 2 9M26 16h5l-1 5h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/></svg></div><div><h1>鹈鹕挖掘机大作战</h1><p class="subtitle">新手任务 · 把 3 铲泥土运到卸土区</p></div></div>
+    <div class="menu"><button id="pause" aria-keyshortcuts="P">暂停</button><button id="reset" aria-keyshortcuts="R">重开</button></div>
+  </header>
+  <section class="yard" aria-label="16比9挖掘机工地">
+    <svg id="scene" viewBox="0 0 1280 720" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#73cbe9"/><stop offset="1" stop-color="#dcf4dc"/></linearGradient>
+        <linearGradient id="sand" x2="0" y2="1"><stop stop-color="#ecbd78"/><stop offset="1" stop-color="#c98648"/></linearGradient>
+        <linearGradient id="gold" x2="0" y2="1"><stop stop-color="#ffe272"/><stop offset=".62" stop-color="#ffc32e"/><stop offset="1" stop-color="#e99619"/></linearGradient>
+        <linearGradient id="glass" x2="1" y2="1"><stop stop-color="#b8edf0"/><stop offset="1" stop-color="#64afba"/></linearGradient>
+        <pattern id="hazard" width="25" height="22" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="25" height="22" fill="#ffd152"/><rect width="11" height="22" fill="#38463d"/></pattern>
+        <g id="cloud"><path d="M5 48Q-9 36 7 25Q15 18 28 21Q34 2 56 3Q79 0 88 21Q107 19 119 30Q129 45 112 50H15Z" fill="#fffdf0"/><path d="M15 50h97q10-2 12-10-20 9-109 10" fill="#d8eef0"/></g>
+        <g id="pine"><path d="M-4 0h8v-40h-8z" fill="#87684f"/><path d="M0-82 18-50h-8l15 22h-10l15 20h-60l15-20h-10l15-22h-8z" fill="#599879"/><path d="M0-82v74h30L15-28h10L10-50h8z" fill="#4b896e"/></g>
+        <g id="cone"><ellipse cx="0" cy="3" rx="22" ry="5" fill="#87553d" opacity=".3"/><path d="M-17 0h34l-11-35h-12z" fill="#f58046" stroke="#713e2e" stroke-width="3"/><path d="M-11-17h22l2 7h-26z" fill="#fff2ce"/><rect x="-21" y="-4" width="42" height="7" rx="3" fill="#704b3a"/></g>
+        <g id="fence"><path d="M0 0v-68m85 68v-68" stroke="#9d8057" stroke-width="8"/><path d="M0-55h85M0-29h85" stroke="#c5a273" stroke-width="12"/><path d="M0-58h85M0-32h85" stroke="#e4c08b" stroke-width="3"/></g>
+      </defs>
+      <rect width="1280" height="720" fill="url(#sky)"/>
+      <circle cx="1014" cy="136" r="68" fill="#ffefad" opacity=".35"/><circle cx="1014" cy="136" r="48" fill="#fff2af"/>
+      <use href="#cloud" transform="translate(137 131) scale(1.65)"/><use href="#cloud" transform="translate(451 117) scale(.92)"/><use href="#cloud" transform="translate(737 192) scale(1.05)"/><use href="#cloud" transform="translate(1103 112) scale(1.2)"/>
+      <path d="M0 375Q114 264 221 299T411 346Q553 263 663 325Q736 352 827 326Q980 230 1092 306Q1198 353 1280 298V530H0Z" fill="#9ec9af"/>
+      <path d="M0 433Q141 331 276 402T581 407Q746 321 893 392Q1032 435 1156 370Q1225 347 1280 373v164H0Z" fill="#77ac88"/>
+      <path d="M0 465Q200 416 366 459T746 445Q974 410 1280 443v99H0Z" fill="#98bb81"/>
+      <g opacity=".83"><use href="#pine" transform="translate(59 490) scale(1.17)"/><use href="#pine" transform="translate(108 495) scale(.75)"/><use href="#pine" transform="translate(220 489) scale(1.25)"/><use href="#pine" transform="translate(253 495) scale(.83)"/><use href="#pine" transform="translate(1085 496) scale(.78)"/><use href="#pine" transform="translate(1217 493) scale(1.28)"/><use href="#pine" transform="translate(1254 492) scale(.85)"/></g>
+      <g fill="none" stroke-linejoin="round" opacity=".75" transform="translate(794 482)"><path d="M0 0v-228h15V0M-8-214h191l-30-17H-8z" fill="#f2cd75" stroke="#8d926a" stroke-width="4"/><path d="M0-209l15 23-15 23 15 23-15 23 15 23-15 23 15 23L0-25m24-190 14-14 14 14 14-14 14 14 14-14 14 14 14-14 14 14 14-14 14 14m-8 1v75q0 13-10 13t-8-9" stroke="#8d926a" stroke-width="3"/><path d="M-46-12h106V2H-46z" fill="#ac9672" stroke="#8d926a" stroke-width="3"/></g>
+      <path d="M0 513Q142 484 306 507Q417 521 565 500T863 509Q1052 484 1280 505v215H0Z" fill="url(#sand)"/>
+      <path d="M0 552H1280" stroke="#a87750" stroke-width="4" opacity=".48"/><path d="M0 555H1280" stroke="#f4ce94" stroke-width="2" opacity=".7"/>
+      <g opacity=".85"><use href="#fence" x="8" y="517"/><use href="#fence" x="93" y="517"/><use href="#fence" x="178" y="517"/><use href="#fence" x="1085" y="517"/><use href="#fence" x="1170" y="517"/><use href="#fence" x="1255" y="517"/></g>
+      <g id="groundDetails" opacity=".39"></g>
+      <g transform="translate(109 514) rotate(-8)"><path d="M0-2v-66" stroke="#684b37" stroke-width="7"/><rect x="-28" y="-96" width="56" height="47" rx="7" fill="#f8c74f" stroke="#684b37" stroke-width="4"/><path d="m0-87 17 28h-34z" fill="#ffe689" stroke="#684b37" stroke-width="3"/><path d="M0-78v8m0 5v1" stroke="#684b37" stroke-width="3" stroke-linecap="round"/></g>
+      <use href="#cone" x="447" y="552"/><use href="#cone" x="1148" y="552"/>
+      <g id="supply"><path id="pile" fill="#ad653c" stroke="#754631" stroke-width="4" stroke-linejoin="round"/><path id="pileTop" fill="#df9259"/><path d="m525 532 11-6m48 7 8-7m41 9 12-4m38 7 10 2m-122 1 6 2" stroke="#f0b078" stroke-width="4" stroke-linecap="round" opacity=".62"/></g>
+      <rect id="dropArea" x="933" y="376" width="162" height="149" rx="12" fill="#b2edd8" fill-opacity=".19" stroke="#2f826c" stroke-width="3" stroke-dasharray="9 8"/>
+      <g transform="translate(1014 490)" fill="none" stroke="#367e69" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".76"><path d="M0-29v27m-12-12L0-2l12-12"/></g>
+      <path id="deposited" fill="#ae663e" stroke="#81492f" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M913 522h21l13 21h133l13-21h21l-17 34H930z" fill="url(#hazard)" stroke="#405047" stroke-width="4" stroke-linejoin="round"/>
+      <g transform="translate(635 460)"><rect x="-53" y="-36" width="106" height="31" rx="8" fill="#fff0ca" stroke="#814f36" stroke-width="2.5"/><text text-anchor="middle" y="-14" fill="#71432e" font-size="19" font-weight="800">取土区</text></g>
+      <g transform="translate(1014 376)"><rect x="-57" y="-38" width="114" height="32" rx="8" fill="#e7f6d6" stroke="#3d775f" stroke-width="2.5"/><text text-anchor="middle" y="-15" fill="#2e6251" font-size="19" font-weight="800">卸土区</text></g>
+      <g id="vehicle">
+        <ellipse cx="-13" cy="552" rx="120" ry="12" fill="#74472d" opacity=".29"/>
+        <rect x="-117" y="493" width="219" height="57" rx="28" fill="#283637" stroke="#16272a" stroke-width="5"/>
+        <rect x="-106" y="502" width="197" height="39" rx="19" fill="#53615b" stroke="#19292a" stroke-width="3"/>
+        <g id="treads" fill="none" stroke="#a2a691" stroke-width="3" stroke-dasharray="6 10"><rect x="-112" y="497" width="209" height="49" rx="24"/></g>
+        <g id="wheels"></g>
+        <path d="M-71 479h130v17H-71z" fill="#414947" stroke="#243337" stroke-width="4"/>
+        <path d="M-113 477v-42q0-15 19-19l46-9 35 12h86q15 0 17 15v43q0 9-9 9H-102q-11 0-11-9Z" fill="url(#gold)" stroke="#384035" stroke-width="5"/>
+        <path d="M-107 462H87v15q0 8-10 8h-176q-8 0-8-8Z" fill="#e79b21"/><path d="M-108 462H87" stroke="#8c6028" stroke-width="3"/>
+        <path d="M-99 438h34m-34 7h29m-29 7h24" stroke="#73542e" stroke-width="4" stroke-linecap="round"/>
+        <path d="M-55 459v-81q0-14 14-17l49-7q17-1 23 14l23 74-5 17z" fill="url(#gold)" stroke="#343d35" stroke-width="5" stroke-linejoin="round"/>
+        <path d="M-46 444v-62q0-9 9-11l45-7q10-1 14 9l22 71z" fill="url(#glass)" stroke="#3b5150" stroke-width="4" stroke-linejoin="round"/>
+        <path d="m-42 397 32-29 14-2-46 42z" fill="#e5ffff" opacity=".46"/>
+        <g id="bird" stroke="#614939" stroke-width="2.4" stroke-linejoin="round">
+          <path d="M-35 442q-4-21 12-29-12-12-5-27 7-14 25-8 15 5 15 20l4 24 5 20z" fill="#fffcdf"/>
+          <path id="wing" d="M-28 426q8-11 16-6l14 8q9 9-3 11l-15-5q-9 5-12-8z" fill="#eee1bd"/>
+          <path d="M1 394q10-4 22 1l14 6q5 5-4 8l-12 7q-13 0-22-14z" fill="#f7a546"/><path d="m7 401 29 2" fill="none" stroke="#9d592f"/>
+          <ellipse id="eye" cx="-5" cy="392" rx="3.3" ry="4.3" fill="#273638" stroke="none"/><circle cx="-4" cy="391" r="1" fill="white" stroke="none"/>
+          <path d="M-31 385q0-16 16-19 14-3 19 13l6 1q5 4-3 6l-36 3q-7 0-2-4z" fill="#ffcc42"/><path d="M-20 380q0-10 5-13" stroke="#de8d25" stroke-width="3" fill="none"/>
+        </g>
+        <path d="m13 442 4-15 9-3" fill="none" stroke="#384748" stroke-width="4" stroke-linecap="round"/>
+        <path d="M-48 449h98" stroke="#f8d764" stroke-width="5"/>
+        <rect x="-28" y="469" width="61" height="12" rx="4" fill="#f6bd40"/><path d="M-19 475h43" stroke="#aa7129" stroke-width="2" stroke-dasharray="11 3"/>
+        <path d="M37 456v-30l15-17 17 17v30z" fill="#e9a329" stroke="#3d4335" stroke-width="4"/>
+      </g>
+      <g id="boom">
+        <path d="M-9-9 42-31 103-19 151-10 157 3 146 12 82 1 44-7 4 14-12 8Z" fill="url(#gold)" stroke="#3e4636" stroke-width="5" stroke-linejoin="round"/>
+        <path d="M9-10 44-23 103-13 139-7" fill="none" stroke="#ffec95" stroke-width="4" stroke-linecap="round"/>
+      </g>
+      <g id="stick">
+        <path d="M-9-12 57-16 117-9 146-9 151 5 141 13 93 10 26 11-7 13Z" fill="url(#gold)" stroke="#3e4636" stroke-width="5" stroke-linejoin="round"/>
+        <path d="M15-7 57-10l65 7" stroke="#ffec95" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </g>
+      <g id="hydraulics" stroke-linecap="round"><path id="rodBase" stroke="#4f5950" stroke-width="9" fill="none"/><path id="rod" stroke="#e3e7ce" stroke-width="4" fill="none"/></g>
+      <g id="bucket">
+        <path d="M-11-12h23l14 12 6 24 12 13-12 4-24 0q-21-1-29-17l-4-16z" fill="#586665" stroke="#273839" stroke-width="5" stroke-linejoin="round"/>
+        <path d="M-18 11q9 13 20 14l28 2 14 10-12 4H8q-20 0-27-16z" fill="#3b4e4f"/>
+        <path id="load" d="M-15 12q4-12 13-13 4-7 13-3 5 0 8 7 8 1 9 17L7 25q-17-1-22-13z" fill="#c37a49" stroke="#714a37" stroke-width="2.5" visibility="hidden"/>
+        <path d="m34 32 10 5-12 4H9" stroke="#c7c8a9" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </g>
+      <g id="pins" fill="#ffd35d" stroke="#3e4636" stroke-width="4"><circle r="10"/><circle r="9"/><circle r="8"/></g>
+      <circle id="tip" r="6" fill="#fff6ca" stroke="#52645b" stroke-width="2.5"/>
+      <g id="effects" pointer-events="none"></g>
+    </svg>
+    <div class="hud"><div class="card"><span class="token" aria-hidden="true">★</span><div><small>得分</small><strong id="score">0</strong></div></div><div class="card"><div><small>已卸土</small><strong id="progress">0 / 3</strong><div class="steps" aria-hidden="true"><span></span><span></span><span></span></div></div></div></div>
+    <div id="prompt" class="prompt" role="status">按住 S 降低动臂，让白点碰到土堆。</div>
+    <div id="overlay" class="overlay" hidden><div class="dialog"><h2 id="dialogTitle"></h2><p id="dialogText"></p><button id="dialogButton"></button></div></div>
+  </section>
+  <section class="controls" aria-label="游戏操作">
+    <div class="group"><h2>履带</h2><div class="pair"><button class="key" data-key="KeyA" aria-keyshortcuts="A"><kbd>A</kbd>左移</button><button class="key" data-key="KeyD" aria-keyshortcuts="D"><kbd>D</kbd>右移</button></div></div>
+    <div class="group"><h2>动臂</h2><div class="pair"><button class="key" data-key="KeyW" aria-keyshortcuts="W"><kbd>W</kbd>抬高</button><button class="key" data-key="KeyS" aria-keyshortcuts="S"><kbd>S</kbd>降低</button></div></div>
+    <div class="group"><h2>斗杆</h2><div class="pair"><button class="key" data-key="KeyJ" aria-keyshortcuts="J"><kbd>J</kbd>伸出</button><button class="key" data-key="KeyL" aria-keyshortcuts="L"><kbd>L</kbd>收回</button></div></div>
+    <div class="group"><h2>铲斗</h2><div class="pair"><button class="key" data-key="KeyI" aria-keyshortcuts="I"><kbd>I</kbd>朝外</button><button class="key" data-key="KeyK" aria-keyshortcuts="K"><kbd>K</kbd>内收</button></div></div>
+    <div class="group action-group"><h2>作业</h2><button class="key action" data-key="Space" aria-keyshortcuts="Space"><kbd>空格</kbd><span id="actionText">挖土</span></button></div>
+  </section>
+</main>
+<script>
+'use strict';
+const byId = id => document.getElementById(id);
+const svgNS = 'http://www.w3.org/2000/svg';
+const goal = 3;
+const drop = {left:933, right:1095, top:376, bottom:525};
+const terrain = [[484,550],[508,537],[528,517],[548,511],[570,490],[595,482],[617,493],[646,505],[664,522],[690,536],[710,550]];
+const buttons = [...document.querySelectorAll('[data-key]')];
+const keyboard = new Set();
+const pointers = new Map();
+const particles = [];
+const wheels = [];
+const pins = [...byId('pins').children];
+const movement = buttons.filter(button => button.dataset.key !== 'Space');
+const permitted = new Set([...buttons.map(button => button.dataset.key), 'KeyP','KeyR']);
+const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+const degrees = radians => radians * 180 / Math.PI;
+const point = (origin, length, angle) => ({x:origin.x + length * Math.cos(angle), y:origin.y + length * Math.sin(angle)});
+const held = key => keyboard.has(key) || [...pointers.values()].includes(key);
+const axis = (positive, negative) => Number(held(positive)) - Number(held(negative));
+let machine, trips, loaded, paused, complete, settling, notice, noticeTime, usedMotion, clock, track;
+
+function shape(parent, tag, attrs) {
+  const node = document.createElementNS(svgNS, tag);
+  for (const [key,value] of Object.entries(attrs)) node.setAttribute(key, value);
+  parent.append(node);
+  return node;
+}
+
+for (const x of [-86,-48,-10,28,66]) {
+  const wheel = shape(byId('wheels'),'g',{});
+  shape(wheel,'circle',{cx:x,cy:522,r:15,fill:'#798479',stroke:'#243536','stroke-width':3});
+  shape(wheel,'path',{d:`M${x-9} 522h18m-9-9v18`,stroke:'#344647','stroke-width':3,'stroke-linecap':'round'});
+  shape(wheel,'circle',{cx:x,cy:522,r:4,fill:'#b0ae94'});
+  wheels.push({node:wheel,x});
+}
+for (let n=0; n<124; n++) {
+  const x = (n*97+24)%1280;
+  const y = 562+(n*59)%159;
+  const size = 2+n%7;
+  shape(byId('groundDetails'),'path',{d:`M${x} ${y}q${size} ${-size/2} ${size*2} -1`,fill:'none',stroke:n%3 ? '#aa774d' : '#fff0bd','stroke-width':n%3+1,'stroke-linecap':'round'});
+}
+
+function pose({x,boom,stick,bucket}) {
+  const base = {x:x+52,y:409};
+  const elbow = point(base,148,boom);
+  const stickAngle = boom + stick;
+  const wrist = point(elbow,142,stickAngle);
+  const angle = stickAngle + bucket;
+  const tip = point(point(wrist,44,angle),37,angle+Math.PI/2);
+  return {base,elbow,wrist,tip,angle,stickAngle};
+}
+
+function pilePoints() {
+  return terrain.map(([x,y]) => [x,y + (550-y)*Math.min(.62,(trips+Number(loaded)+Number(settling))*.16)]);
+}
+
+function zoneAt(tip) {
+  if (tip.x >= drop.left && tip.x <= drop.right && tip.y >= drop.top && tip.y <= drop.bottom) return 'drop';
+  const surface = pilePoints();
+  const next = surface.findIndex(([x]) => tip.x < x);
+  if (next <= 0 || tip.y > 550) return '';
+  const [a,b] = [surface[next-1],surface[next]];
+  const height = a[1]+(b[1]-a[1])*(tip.x-a[0])/(b[0]-a[0]);
+  return tip.y >= height ? 'soil' : '';
+}
+
+function align(id, pos, angle=0) {
+  byId(id).setAttribute('transform', `translate(${pos.x} ${pos.y}) rotate(${degrees(angle)})`);
+}
+
+function render() {
+  const {base,elbow,wrist,tip,angle,stickAngle} = pose(machine);
+  align('vehicle',{x:machine.x,y:0});
+  byId('treads').setAttribute('stroke-dashoffset', -track%16);
+  for (const wheel of wheels) wheel.node.setAttribute('transform',`rotate(${track*3.8%360} ${wheel.x} 522)`);
+  align('boom',base,machine.boom);
+  align('stick',elbow,stickAngle);
+  align('bucket',wrist,angle);
+  const rodEnd = point(base,98,machine.boom);
+  const rodPath = `M${base.x-4} ${base.y+34}L${rodEnd.x} ${rodEnd.y+5}`;
+  byId('rodBase').setAttribute('d',rodPath);
+  byId('rod').setAttribute('d',rodPath);
+  [base,elbow,wrist].forEach((p,i) => {
+    pins[i].setAttribute('cx',p.x);
+    pins[i].setAttribute('cy',p.y);
+  });
+  byId('load').setAttribute('visibility',loaded ? 'visible' : 'hidden');
+  const ready = !settling && zoneAt(tip) === (loaded ? 'drop' : 'soil');
+  byId('tip').setAttribute('cx',tip.x);
+  byId('tip').setAttribute('cy',tip.y);
+  byId('tip').setAttribute('fill',ready ? '#70e1ae' : '#fff6ca');
+  byId('tip').setAttribute('r',ready ? 8 : 6);
+  byId('eye').setAttribute('ry',clock%3.7 > 3.55 ? .7 : 4.3);
+  const wave = complete ? Math.sin(clock*14)*31 : (axis('KeyD','KeyA') || axis('KeyS','KeyW'))*8;
+  byId('wing').setAttribute('transform',`rotate(${wave} -23 426)`);
+  const message = noticeTime > 0 ? notice : settling ? ['泥土正在落下…',''] : ready ? [loaded ? '绿点已对准，按空格卸土！' : '绿点已碰到土堆，按空格挖土！','good'] : loaded ? ['运到右侧，让白点进入绿色虚线框。',''] : usedMotion ? ['把白点对准左侧土堆。',''] : ['按住 S 降低动臂，让白点碰到土堆。',''];
+  const prompt = byId('prompt');
+  if (prompt.textContent !== message[0]) prompt.textContent = message[0];
+  prompt.dataset.kind = message[1];
+  for (const button of movement) button.classList.toggle('held',held(button.dataset.key));
+}
+
+function syncProgress() {
+  byId('score').textContent = trips * 100;
+  byId('progress').textContent = `${trips} / ${goal}`;
+  [...document.querySelectorAll('.steps span')].forEach((step,i) => step.classList.toggle('done',i < trips));
+  byId('actionText').textContent = loaded ? '卸土' : '挖土';
+  const surface = pilePoints();
+  byId('pile').setAttribute('d',`M${surface.join('L')}Z`);
+  const lines = surface.map(([x,y]) => [x,Math.min(550,y+13)]).reverse();
+  byId('pileTop').setAttribute('d',`M${surface.join('L')}L${lines.join('L')}Z`);
+  byId('deposited').setAttribute('d',trips ? `M952 542Q984 ${539-trips*7} 1001 ${537-trips*10}Q1020 ${532-trips*8} 1041 ${539-trips*5}L1079 542Z` : '');
+}
+
+function say(message, kind, seconds=2) {
+  notice = [message,kind];
+  noticeTime = seconds;
+}
+
+function burst(pos,color,fall=false) {
+  for (let i=0;i<16;i++) {
+    const node = shape(byId('effects'),'circle',{cx:pos.x,cy:pos.y,r:fall ? 3+i%4 : 2+i%4,fill:color});
+    particles.push({node,x:pos.x,y:pos.y,vx:(Math.random()-.5)*(fall?70:144),vy:fall?20+Math.random()*42:-45-Math.random()*90,life:fall?.9:.55+Math.random()*.2,fall});
+  }
+}
+
+function act() {
+  if (paused || complete || settling) return;
+  const {tip} = pose(machine);
+  const zone = zoneAt(tip);
+  if (!loaded && zone === 'soil') {
+    loaded = true;
+    burst(tip,'#df9e64');
+    say('挖到一铲！按 W 抬臂，按 D 运往卸土区。','good');
+  } else if (loaded && zone === 'drop') {
+    loaded = false;
+    settling = .56;
+    noticeTime = 0;
+    burst(tip,'#ad653c',true);
+  } else {
+    say(loaded ? '还不能卸土，让白点进入绿色虚线框。' : '还没挖到，让白点碰到土堆再试。','warn');
+  }
+  syncProgress();
+  render();
+}
+
+function showOverlay() {
+  byId('overlay').hidden = !paused && !complete;
+  byId('pause').textContent = paused ? '继续' : '暂停';
+  if (paused || complete) {
+    byId('dialogTitle').textContent = complete ? '任务完成！' : '游戏已暂停';
+    byId('dialogText').textContent = complete ? `搬运 ${goal} 铲泥土，获得 ${trips*100} 分。` : '按 P 或点击下方按钮继续。';
+    byId('dialogButton').textContent = complete ? '再玩一次' : '继续游戏';
+  }
+}
+
+function clearInput() {
+  keyboard.clear();
+  pointers.clear();
+}
+
+function resetGame() {
+  machine = {x:300,boom:-.64,stick:1.63,bucket:-.92};
+  trips = settling = noticeTime = clock = track = 0;
+  loaded = paused = complete = usedMotion = false;
+  clearInput();
+  for (const particle of particles.splice(0)) particle.node.remove();
+  syncProgress();
+  showOverlay();
+  render();
+}
+
+function togglePause() {
+  if (complete) return;
+  paused = !paused;
+  clearInput();
+  showOverlay();
+  render();
+}
+
+function changeJoint(joint, change, min, max) {
+  if (!change) return;
+  const current = machine[joint];
+  machine[joint] = clamp(current + change,min,max);
+  if (pose(machine).tip.y > 550) machine[joint] = current;
+}
+
+function update(dt) {
+  clock += dt;
+  if (!complete) {
+    const direction = axis('KeyD','KeyA');
+    const boom = axis('KeyS','KeyW');
+    const stick = axis('KeyL','KeyJ');
+    const bucket = axis('KeyK','KeyI');
+    if (direction || boom || stick || bucket) usedMotion = true;
+    const nextX = clamp(machine.x + direction*240*dt,122,1157);
+    track += nextX - machine.x;
+    machine.x = nextX;
+    changeJoint('boom',boom*.97*dt,-1.46,.18);
+    changeJoint('stick',stick*1.12*dt,.48,2.24);
+    changeJoint('bucket',bucket*1.47*dt,-1.85,1.29);
+    noticeTime -= dt;
+    if (settling) {
+      settling = Math.max(0,settling-dt);
+      if (!settling) {
+        trips++;
+        say('卸土成功，+100 分！','good');
+        syncProgress();
+        if (trips === goal) {
+          complete = true;
+          clearInput();
+          showOverlay();
+        }
+      }
+    }
+  }
+  for (let i=particles.length-1; i>=0; i--) {
+    const p = particles[i];
+    p.life -= dt;
+    p.x += p.vx*dt;
+    p.vy += (p.fall ? 835 : 230)*dt;
+    p.y += p.vy*dt;
+    if (p.life <= 0 || p.y >= 548) {
+      p.node.remove();
+      particles.splice(i,1);
+    } else {
+      p.node.setAttribute('cx',p.x);
+      p.node.setAttribute('cy',p.y);
+      p.node.setAttribute('opacity',Math.min(1,p.life*3));
+    }
+  }
+}
+
+document.addEventListener('keydown',event => {
+  if (!permitted.has(event.code) || event.ctrlKey || event.altKey || event.metaKey || event.isComposing) return;
+  if (event.code === 'Space' && event.target.closest('#overlay button, .menu button')) return;
+  event.preventDefault();
+  if (event.code === 'KeyP' && !event.repeat) togglePause();
+  else if (event.code === 'KeyR' && !event.repeat) resetGame();
+  else if (event.code === 'Space' && !event.repeat) act();
+  else if (!paused && !complete && !event.repeat) keyboard.add(event.code);
+});
+document.addEventListener('keyup',event => keyboard.delete(event.code));
+window.addEventListener('blur',clearInput);
+document.addEventListener('visibilitychange',clearInput);
+for (const button of buttons) {
+  const key = button.dataset.key;
+  if (key === 'Space') {
+    button.addEventListener('click',act);
+    continue;
+  }
+  button.addEventListener('pointerdown',event => {
+    if (event.button !== 0 || paused || complete) return;
+    event.preventDefault();
+    button.setPointerCapture(event.pointerId);
+    pointers.set(event.pointerId,key);
+  });
+  for (const name of ['pointerup','pointercancel','lostpointercapture']) {
+    button.addEventListener(name,event => pointers.delete(event.pointerId));
+  }
+  button.addEventListener('click',event => {
+    if (event.detail || paused || complete) return;
+    keyboard.add(key);
+    update(.12);
+    keyboard.delete(key);
+    render();
+  });
+  button.addEventListener('contextmenu',event => event.preventDefault());
+}
+byId('pause').addEventListener('click',togglePause);
+byId('reset').addEventListener('click',resetGame);
+byId('dialogButton').addEventListener('click',() => {
+  if (complete) resetGame();
+  else togglePause();
+});
+let previous = performance.now();
+function frame(now) {
+  const dt = clamp((now-previous)/1000,0,.04);
+  previous = now;
+  if (!paused) update(dt);
+  render();
+  requestAnimationFrame(frame);
+}
+resetGame();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
