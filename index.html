@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>鹈鹕挖掘队</title>
+<style>
+:root{color-scheme:light;font-family:system-ui,"Microsoft YaHei",sans-serif;background:#f7f1e5;color:#26332a}
+*{box-sizing:border-box}body{margin:0;padding:clamp(14px,4vw,50px)}
+main{max-width:1152px;margin:auto}header{margin:0 0 14px;display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+h1{font-size:clamp(22px,4vw,34px);margin:0;letter-spacing:.05em}header span{font-size:13px;color:#526453;white-space:nowrap}
+.player{overflow:hidden;border-radius:17px;background:#fffaf0;box-shadow:0 12px 32px #4b452122;border:1px solid #ded5bc}
+canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#b4e2dc}
+.controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:10px 12px}
+button{font:inherit;font-size:13px;font-weight:650;color:#26332a;background:#f2ead8;border:1px solid #e1d4b4;border-radius:8px;min-height:36px;padding:5px 10px;cursor:pointer}
+button:hover{background:#f7ddb0}button:focus-visible,input:focus-visible{outline:3px solid #286e62;outline-offset:2px}
+#play{background:#244c40;color:white;min-width:58px;border-color:#244c40}
+input{flex:1;min-width:92px;accent-color:#286e62}output{color:#526453;font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+</style>
+</head>
+<body>
+<main>
+<header><h1>鹈鹕挖掘队</h1><span>16:9 · 10 秒</span></header>
+<div class="player">
+<canvas id="scene" width="1280" height="720" aria-label="卡通动画：一只戴安全帽的鹈鹕驾驶黄色挖掘机挖土、倒土并鸣笛">浏览器需要支持 Canvas 才能播放这段动画。</canvas>
+<div class="controls">
+<button id="play" type="button">暂停</button>
+<button id="restart" type="button">重播</button>
+<input id="seek" type="range" min="0" max="10" step="0.01" value="0" aria-label="播放进度（秒）">
+<output id="time" for="seek">0.0 / 10 秒</output>
+<button id="sound" type="button" aria-pressed="false">开启声音</button>
+</div>
+</div>
+</main>
+<script>
+"use strict";
+const canvas = document.querySelector("#scene");
+const ctx = canvas.getContext("2d");
+const ink = "#293833";
+const TAU = Math.PI * 2;
+const rad = degrees => degrees * Math.PI / 180;
+const clamp = value => Math.max(0, Math.min(1, value));
+const ease = value => { const t = clamp(value); return t * t * (3 - 2 * t); };
+const mix = (a, b, t) => a + (b - a) * t;
+
+function path(d, fill, stroke, width = 4) {
+  const p = new Path2D(d);
+  if (fill) { ctx.fillStyle = fill; ctx.fill(p); }
+  if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = width; ctx.stroke(p); }
+}
+function oval(x, y, rx, ry, fill, stroke, width = 4, rotation = 0) {
+  ctx.beginPath();
+  ctx.ellipse(x, y, rx, ry, rotation, 0, TAU);
+  ctx.fillStyle = fill;
+  ctx.fill();
+  if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = width; ctx.stroke(); }
+}
+function box(x, y, width, height, radius, fill, stroke, lineWidth = 4) {
+  ctx.beginPath(); ctx.roundRect(x, y, width, height, radius);
+  ctx.fillStyle = fill; ctx.fill();
+  if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lineWidth; ctx.stroke(); }
+}
+function line(x, y, ex, ey, color, width) {
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(ex, ey);
+  ctx.strokeStyle = color; ctx.lineWidth = width; ctx.stroke();
+}
+function gradient(y0, y1, ...colors) {
+  const g = ctx.createLinearGradient(0, y0, 0, y1);
+  colors.forEach((color, i) => g.addColorStop(i / (colors.length - 1), color));
+  return g;
+}
+function cloud(x, y, scale) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale);
+  path("M-96 13Q-94-8-65-9Q-64-41-29-42Q-6-66 24-53Q49-49 55-26Q93-27 104-3Q117 18 89 24H-77Q-95 24-96 13Z", "#fff9df");
+  path("M-64 15H87", null, "#f0eacb", 3);
+  ctx.restore();
+}
+function texture(count, seed, draw) {
+  let state = seed;
+  function random() {
+    state = (1664525 * state + 1013904223) >>> 0;
+    return state / 4294967296;
+  }
+  for (let i = 0; i < count; i++) draw(random(), random(), random(), i);
+}
+function backdrop(t) {
+  ctx.fillStyle = gradient(0, 555, "#8bd0cd", "#c9ead4", "#f6edbf");
+  ctx.fillRect(0, 0, 1280, 720);
+  oval(1080, 130, 77, 77, "#fff3c761");
+  oval(1080, 130, 59, 59, "#fff1b2");
+  cloud(197 + t * 3, 151, 1.12);
+  cloud(620 + t * 2, 106, .65);
+  cloud(962 + t * 1.4, 220, .77);
+  path("M0 428Q95 347 183 365Q295 272 422 350Q484 375 531 420Q666 326 800 381Q870 315 967 350Q1090 274 1280 375V558H0Z", "#9dc4a3");
+  path("M0 475Q130 404 273 439Q364 445 465 471Q605 395 751 442Q838 480 937 455Q1062 384 1280 445V563H0Z", "#749e7d");
+  path("M0 511Q158 468 286 491Q476 515 618 478Q785 436 932 489Q1071 520 1280 469V590H0Z", "#89ae7f");
+  for (const [x, y, s] of [[62,493,.72],[104,485,1],[166,493,.56],[1175,487,1],[1217,482,.83],[1252,488,1.16]]) {
+    ctx.save(); ctx.translate(x,y); ctx.scale(s,s);
+    path("M-18 2L-7-15H-13L0-34L15-14H8L21 2Z", "#588b75");
+    line(0,0,0,8,"#588b75",4); ctx.restore();
+  }
+  path("M0 528Q141 509 297 528Q458 541 677 525Q1008 503 1280 533V720H0Z", gradient(521,720,"#e7ba7d","#d89960","#bb754d"));
+  path("M0 560Q152 540 311 561Q465 576 680 551Q966 526 1280 560", null, "#efd099", 4);
+  path("M0 666Q169 651 304 669T650 660T952 655T1280 667V720H0Z", "#a7584142");
+  texture(155, 82, (a,b,c,i) => {
+    const x = a * 1280, y = 549 + b * 171, size = 1.2 + c * 5;
+    oval(x,y,size,size * .33,i % 3 ? "#9c5d3a44" : "#ffe1a67d",null,0,-.13);
+  });
+  for (const [x,y,s] of [[77,594,1],[162,641,.9],[668,635,1],[1148,615,.85],[1220,573,1.15],[27,668,1.1]]) {
+    ctx.save(); ctx.translate(x,y); ctx.scale(s,s);
+    path("M-13 1Q-8-9 1-8Q8-9 13 1Z","#b88865","#9d684b",2);
+    path("M-7-3L-1-5L5-5",null,"#deb48a",2);ctx.restore();
+  }
+  for (const [x,y] of [[35,541],[170,539],[710,530],[1175,538],[1230,543]]) {
+    path(`M${x-11} ${y}q4-11 8-11l5 10q4-14 10-14l-3 13`,null,"#6e9466",3);
+  }
+}
+function soilClump(x, y, size, rotation = 0) {
+  ctx.save(); ctx.translate(x,y); ctx.rotate(rotation); ctx.scale(size,size);
+  path("M-10 3L-8-4L-2-8L6-6L10 0L6 6L-5 7Z", "#9e552e", "#713d2b", 1.4);
+  path("M-6-3L-2-5L4-4", null, "#e4a160", 1.3); ctx.restore();
+}
+function siteSoil(t) {
+  const cut = ease((t - 2.15) / 1.25);
+  const heap = ease((t - 6.02) / .95);
+  oval(837,590,117,14,"#794a3332");
+  ctx.save(); ctx.translate(842,590); ctx.scale(1,1-.75 * cut);
+  path("M-112 0Q-102-9-87-10Q-74-28-49-25Q-27-47-5-37Q21-42 34-27Q53-29 70-15Q87-16 107 0Q49 13-19 11Q-73 13-112 0Z","#9f5735","#71432f",3);
+  path("M-94-3Q-83-8-79-13Q-66-25-49-20Q-27-42-5-31Q15-37 36-22Q56-23 72-10Q48-17 26-11Q4-21-17-12Q-36-20-59-10Q-75-12-94-3Z","#bc7748");
+  texture(23,17,(a,b,c)=>soilClump((a-.5)*144,-5-b*10,.17+c*.2));
+  ctx.restore();
+  oval(1001,598,92,13,"#794a3330");
+  ctx.save(); ctx.translate(1009,597); ctx.scale(.25+.75*heap,.10+.90*heap);
+  path("M-90 0Q-82-11-66-14Q-57-27-38-23Q-24-50-3-43Q13-48 27-29Q49-29 59-14Q77-13 91 0Q32 13-27 11Q-70 10-90 0Z","#a85c37","#744530",3);
+  path("M-63-11Q-54-24-37-18Q-20-47-1-38Q15-42 26-25Q47-26 56-13Q14-22-5-21Q-37-10-63-11Z","#ca8551");
+  texture(19,29,(a,b,c)=>soilClump((a-.5)*126,-5-b*12,.22+c*.27));
+  ctx.restore();
+}
+function runningGear() {
+  oval(411,602,234,20,"#57473735");
+  box(219,500,385,98,48,"#2a3735",ink,6);
+  box(234,512,355,73,36,"#4a5450","#172825",4);
+  box(245,524,332,49,24,"#283832");
+  for (let i=0;i<6;i++) {
+    const x = 274 + i*54;
+    oval(x,549,23,23,"#73786a","#24362f",4);
+    oval(x,549,14,14,"#515c50");
+    oval(x,549,5,5,"#a2a18c");
+  }
+  for (let i=0;i<14;i++) {
+    const x=263+i*23;
+    line(x,505,x+3,511,"#838676",3);
+    line(x,586,x+3,592,"#838676",3);
+  }
+  box(305,477,216,34,10,"#65583e",ink,5);
+  box(342,480,142,18,7,"#938160",ink,3);
+}
+const poses = [
+  [0,-58,66,-18,0], [.6,-58,66,-18,0], [1.4,-45,59,-2,1],
+  [2.28,-13,69,9,1], [2.76,-8,82,0,1], [3.52,-11,106,-43,-1],
+  [4.45,-59,66,-43,-1], [5.56,-16,13,-42,.75],
+  [5.86,-16,13,33,.75], [6.13,-16,13,70,1], [6.43,-17,13,63,1],
+  [6.70,-17,13,74,.7], [7.12,-25,24,16,0], [7.95,-58,66,-18,0],
+  [10,-58,66,-18,0]
+];
+function poseAt(t) {
+  let index=1;
+  while (index<poses.length-1 && t>poses[index][0]) index++;
+  const a=poses[index-1], b=poses[index], k=ease((t-a[0])/(b[0]-a[0]));
+  return a.slice(1).map((value,i)=>mix(value,b[i+1],k));
+}
+function joint(x,y,r) {
+  oval(x,y,r,r,"#b06b26",ink,4);
+  oval(x,y,r*.62,r*.62,"#f6cc58","#875526",2);
+  oval(x-1,y-2,r*.23,r*.23,"#fff1a6");
+}
+function steel(x,y,ex,ey) {
+  line(x,y,ex,ey,ink,13);
+  line(x,y,ex,ey,"#d0d9ca",7);
+  line(x,y,mix(x,ex,.57),mix(y,ey,.57),ink,17);
+  line(x,y,mix(x,ex,.57),mix(y,ey,.57),"#9a642d",10);
+}
+function armSegment(x,y,len,angle,width) {
+  ctx.save(); ctx.translate(x,y); ctx.rotate(angle);
+  path(`M-12 ${-width*.78}Q10 ${-width-4} 24 ${-width}L${len-16} -16Q${len+17} -18 ${len+18} 0Q${len+17} 17 ${len-9} 18L25 ${width}Q0 ${width+4} -12 ${width*.78}Z`, gradient(-width,width,"#ffe57d","#ffc246","#ec9229"),ink,5);
+  path(`M18 ${width*.56}L${len-15} 11`,null,"#d88328",6);
+  path(`M27 ${-width*.54}L${len-22} -9`,null,"#fff1a0",4);
+  ctx.restore();
+}
+function bucket(x,y,angle,t) {
+  ctx.save(); ctx.translate(x,y); ctx.rotate(angle);
+  path("M-13-13Q0-24 13-11L23 6L61 8L48 34Q34 55 4 43Q-15 37-20 14Z","#a85c2e",ink,5);
+  path("M-12 2Q9-1 16 12Q27 28 52 14L44 32Q23 49 1 37Q-11 29-12 2Z","#793f29");
+  const load = ease((t-2.83)/.55) * (1-ease((t-5.84)/.47));
+  if(load>.001) {
+    ctx.save(); ctx.translate(18,29); ctx.scale(load,load);
+    path("M-20 5Q-29-5-19-12Q-15-19-5-15Q5-27 16-18Q25-23 31-13Q40-9 35 1Q13 18-20 5Z","#a85e32","#693b2a",3);
+    soilClump(2,-8,.63,.3);soilClump(21,-9,.51,-.6);soilClump(-12,-5,.43);
+    ctx.restore();
+  }
+  path("M-16 7Q-7 29 14 33Q37 42 59 13L66 13L68 20L62 27L55 27L50 40L42 40L35 49Q3 57-13 40Q-24 29-21 14Z","#eab75b",ink,4);
+  path("M-12 26Q10 54 39 42",null,"#fbda85",3);
+  joint(0,0,10);
+  ctx.restore();
+}
+function excavatorArm(t,p) {
+  const [a,b,c] = p.map(rad);
+  const x=596,y=438,L=195,M=174;
+  const ex=x+L*Math.cos(a),ey=y+L*Math.sin(a);
+  const wx=ex+M*Math.cos(b),wy=ey+M*Math.sin(b);
+  armSegment(x,y,L,a,28);
+  armSegment(ex,ey,M,b,20);
+  steel(x+18,y-28,mix(x,ex,.63),mix(y,ey,.63)-27);
+  steel(mix(x,ex,.78),mix(y,ey,.78)-8,mix(ex,wx,.53)-10,mix(ey,wy,.53)-5);
+  joint(ex,ey,16); joint(x,y,19);
+  bucket(wx,wy,c,t);
+}
+function bird(t,lever,horn) {
+  const bob=2*Math.sin(t*3)+horn*4;
+  ctx.save(); ctx.translate(0,bob);
+  path("M415 443Q411 415 437 400Q442 378 431 358Q414 333 430 307Q443 287 477 294Q505 298 505 332Q501 354 486 370Q478 392 505 411Q521 425 514 450Z","#fff9e7",ink,5);
+  path("M425 442Q451 425 452 401Q455 385 449 367Q468 384 472 409Q484 427 498 446Z","#dfded0");
+  path("M481 337Q507 332 532 338L569 345Q578 349 568 355Q540 369 515 374Q492 383 479 365Z","#ffab67",ink,4);
+  path("M484 345Q506 355 529 351L568 349Q539 357 514 369Q496 374 486 361Z","#f18964");
+  path("M481 331Q507 325 531 334L567 342Q579 346 572 350Q562 354 541 351Q505 353 483 346Z","#ffd077",ink,4);
+  path("M493 343Q501 339 510 340",null,"#954d3b",2.5);
+  oval(484,320,10,13,"white",ink,2);
+  if (horn>.2 || (t>1.03&&t<1.17) || (t>4.69&&t<4.80)) {
+    oval(484,320,10,13,"#fff8e1");
+    path("M477 321Q484 312 491 321",null,ink,3.2);
+  } else {
+    oval(488,321,4.4,6.4,ink); oval(490,318,1.5,1.5,"white");
+  }
+  oval(475,342,6.7,3,"#f5ad8b",null,0,-.18);
+  path("M426 305Q420 280 441 269Q468 251 490 269Q507 282 507 304Z",gradient(261,306,"#ffec87","#ffb831"),ink,4.5);
+  path("M452 299Q447 275 465 262Q478 261 488 267Q470 274 472 301Z","#ffe06c","#cf8025",2.5);
+  path("M426 298Q449 297 472 301Q493 304 509 299Q519 299 517 307Q512 314 488 313Q460 309 435 311Q423 312 422 305Z","#ffc442",ink,4);
+  ctx.restore();
+  const hx=529+lever*15, hy=407+Math.abs(lever)*4-horn*12;
+  line(535,458,hx,hy,ink,8);
+  line(535,458,hx,hy,"#9ca49a",3);
+  oval(hx,hy,8,7,horn>.2?"#f18a62":"#354b43",ink,2);
+  path(`M453 ${406+bob}Q461 ${395+bob} 479 ${402+bob}Q501 ${hy+10} ${hx-8} ${hy-4}Q${hx+1} ${hy-8} ${hx+6} ${hy-1}Q${hx+10} ${hy+9} ${hx-2} ${hy+14}Q494 ${hy+31} 467 ${429+bob}Q448 ${428+bob} 453 ${406+bob}Z`,"#fff6db",ink,4);
+  path(`M469 ${419+bob}Q486 ${423+bob} 505 ${hy+15}`,null,"#d4cbbb",3);
+}
+function machine(t,lever,horn) {
+  path("M323 368H390L412 483H237V425Q237 382 266 374Z",gradient(368,484,"#ffdf68","#ffaf32","#e68b27"),ink,5);
+  path("M245 450H397V477H240Z","#e99626");
+  box(267,397,93,50,12,"#ef9c2c","#ab6c2b",3);
+  for(let i=0;i<5;i++){
+    box(278+i*14,406,7,28,3,"#775332");
+  }
+  path("M380 455V273Q380 251 401 251H540Q560 251 568 275L606 411V459Z","#356458",ink,6);
+  path("M392 443V276Q392 266 402 266H539Q551 266 557 284L590 411V448Z",gradient(266,448,"#b2e0ce","#76b2a1"),ink,3);
+  path("M398 289L423 268H451L398 328ZM542 277L551 291L532 311L510 311Z","#e3f1d76d");
+  path("M403 450V395Q406 380 415 383L453 397L455 449Z","#5f554a",ink,4);
+  bird(t,lever,horn);
+  path("M559 277L596 412V452H580V414L545 278Z","#42766b",ink,4);
+  path("M365 264L377 241Q381 233 397 233H543Q556 233 564 241L578 261Q581 269 567 271H374Q361 271 365 264Z",gradient(232,274,"#ffed8a","#ffd04e","#f3a52c"),ink,5);
+  path("M389 241H543",null,"#fff4a5",4);
+  path("M234 454H354L378 439H565L582 422H612Q629 422 629 440V470Q629 490 609 490H249Q231 490 231 470Z",gradient(423,491,"#ffe77c","#ffc242","#e99929"),ink,5);
+  path("M250 477H608",null,"#c87c29",4);
+  box(250,457,31,10,4,"#ffeb9b","#ae6e2b",2);
+  for (const x of [570,581,592]) path(`M${x} 467l8-13h5l-8 13Z`,"#664729");
+  joint(602,444,14);
+}
+function effects(t,horn) {
+  for(let i=0;i<23;i++){
+    const age=t-(5.87+i*.031);
+    if(age<0 || age>.94) continue;
+    const x=934+i*.8+(72-i*2.3)*age;
+    const y=394+(26-i*1.9)*age+223*age*age;
+    if(y<590) soilClump(x,y,.24+(i%5)*.09,i+age*4);
+  }
+  for(const [start, x, y, dir] of [[2.13,885,568,1],[2.75,828,571,-1],[6.62,999,592,1]]){
+    const age=t-start;
+    if(age<0 || age>.78) continue;
+    ctx.save(); ctx.globalAlpha=(1-age/.78)*.68;
+    for(let i=0;i<9;i++){
+      oval(x+dir*(i*5+age*(31+i*12)),y-(i%3)*8-age*(18+i*11),5+age*8,4+age*5,"#f5c68c");
+    }
+    ctx.restore();
+  }
+  if(horn<=.001) return;
+  ctx.save(); ctx.globalAlpha=Math.min(1,horn*2.6);
+  const s=.80+.20*horn;
+  ctx.translate(594,266); ctx.scale(s,s);
+  path("M-18 6L-62 22L-43-6Q-56-16-48-33Q-37-58 4-64Q20-91 66-86Q96-86 112-73Q160-84 177-55Q199-26 166-7Q144 12 103 6Q71 29 29 16Q1 20-18 6Z","#fff5b9",ink,4);
+  ctx.font='900 36px system-ui,"Microsoft YaHei",sans-serif';
+  ctx.fillStyle="#884021";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("叭！叭！",62,-33);
+  path("M185-62l25-14M194-43l31-1M188-21l25 11",null,"#ce8038",5);
+  const notes=[[211,-83],[252,-115]];
+  for (const [x,y] of notes) {
+    oval(x,y,8,5,"#377d6b",null,0,-.35);
+    path(`M${x+6} ${y-2}v-22q3 5 12 7`,null,"#377d6b",4);
+  }
+  ctx.restore();
+}
+function hornPulse(t) {
+  return Math.max(0, ...[8.16,8.66].map(start => {
+    const phase=(t-start)/.42;
+    return phase>0&&phase<1 ? Math.sin(phase*Math.PI) : 0;
+  }));
+}
+function draw(t) {
+  ctx.lineCap="round";ctx.lineJoin="round";
+  const pose=poseAt(t), horn=hornPulse(t);
+  backdrop(t); siteSoil(t); runningGear();
+  excavatorArm(t,pose); machine(t,pose[3],horn); effects(t,horn);
+}
+const play=document.querySelector("#play");
+const restart=document.querySelector("#restart");
+const seek=document.querySelector("#seek");
+const time=document.querySelector("#time");
+const sound=document.querySelector("#sound");
+let current=0, playing=!matchMedia("(prefers-reduced-motion: reduce)").matches;
+let lastFrame=null, context=null, muted=true;
+const horns=[8.16,8.66];
+function beep() {
+  if(muted || context?.state!=="running") return;
+  const now=context.currentTime;
+  const gain=context.createGain();
+  gain.gain.setValueAtTime(.0001,now);
+  gain.gain.exponentialRampToValueAtTime(.075,now+.045);
+  gain.gain.exponentialRampToValueAtTime(.0001,now+.32);
+  gain.connect(context.destination);
+  for(const pitch of [342,428]) {
+    const tone=context.createOscillator();
+    tone.type="triangle";
+    tone.frequency.setValueAtTime(pitch*.88,now);
+    tone.frequency.exponentialRampToValueAtTime(pitch,now+.06);
+    tone.frequency.exponentialRampToValueAtTime(pitch*.91,now+.29);
+    tone.connect(gain); tone.start(now); tone.stop(now+.33);
+  }
+}
+function render() {
+  draw(current);
+  seek.value=String(current);
+  time.value=current.toFixed(1)+" / 10 秒";
+  play.textContent=playing?"暂停":"播放";
+}
+function tick(stamp) {
+  if(playing) {
+    const previous=current;
+    current=Math.min(10,current+(lastFrame===null?0:(stamp-lastFrame)/1000));
+    if(horns.some(h=>previous<h && current>=h && current-h<.25)) beep();
+    if(current>=10) playing=false;
+    render();
+  }
+  lastFrame=stamp;
+  requestAnimationFrame(tick);
+}
+play.addEventListener("click",()=>{
+  if(current>=10) current=0;
+  playing=!playing; render();
+});
+restart.addEventListener("click",()=>{current=0;playing=true;render();});
+seek.addEventListener("input",()=>{current=Number(seek.value);playing=false;render();});
+sound.addEventListener("click",async()=>{
+  if(muted) {
+    const AudioEngine=window.AudioContext || window.webkitAudioContext;
+    if(!AudioEngine) {sound.textContent="声音不可用";sound.disabled=true;return;}
+    try {context ??= new AudioEngine(); await context.resume();}
+    catch {sound.textContent="声音不可用";sound.disabled=true;return;}
+  }
+  muted=!muted;
+  sound.setAttribute("aria-pressed",String(!muted));
+  sound.textContent=muted?"开启声音":"关闭声音";
+});
+render();
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
